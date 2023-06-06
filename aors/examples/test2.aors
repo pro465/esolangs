@@ -1,0 +1,34 @@
+# Starting state is a small element seed.
+Cwgḃtḋẋ
+
+# Running-XOR counter.
+0c:c	1c:C
+0C:C	1C:c
+# Expand the counter, so that it triggers at powers of 2.
+0g:wg	1g:wg
+0w:w	1w:C
+
+# Tape expansion. Produces the seed `botds` from which new elements
+# grow (an element seed is `bo…tds…`, but it needs to grow twice as
+# fast as most things, so we start both sides of it at width 2 rather
+# than 1 so that the width ends up even). Only reacts to signals on
+# every second cycle.
+0x:ẋ	1x:ẋ	0ẋ:x	1ẋ:botdsx
+
+# Seed expansion. A seed `b` grows over time until it's reset into a
+# proper element wrapper. (`d` is similar but reflected.) Only reacts
+# to signals on every second cycle.
+0b:ḃ	1b:ḃ	0ḃ:boo	1ḃ:Ṗ	0o:ȯ	1o:ȯ	0ȯ:o	1ȯ:Ṗ
+0d:ḋ	1d:ḋ	0ḋ:dss	1ḋ:Ṙ	0s:ṡ	1s:ṡ	0ṡ:s	1ṡ:Ṙ
+
+# The element seed `t` becomes `e` when signalled.
+0t:t	1t:e
+
+# Log-decaying padding `p`, and its reflected version `r`. Again,
+# only reacts to signals on every second cycle.
+0ṕ:Ṗ	1ṕ:Ṗ	0Ṗ:p	1Ṗ:ṕ	0p:ṗ	1p:Ṗ	0ṗ:p	1ṗ:p
+0ŕ:Ṙ	1ŕ:Ṙ	0Ṙ:ŕ	1Ṙ:r	0r:ṙ	1r:Ṙ	0ṙ:r	1ṙ:r
+
+# An element `e` becomes `f` for one cycle when triggered, then
+# deactivates (`ē`). It reactivates at the next trigger.
+0e:e	1e:f	0f:ē	1f:e	0ē:ē	1ē:e
