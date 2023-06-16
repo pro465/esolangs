@@ -80,6 +80,7 @@ impl<'a> State<'a> {
             res.push_str(self.rules[&c][parity]);
             parity ^= c.is_uppercase() as usize;
         }
+        dbg!(parity);
 
         std::mem::replace(&mut self.inp, res)
     }
