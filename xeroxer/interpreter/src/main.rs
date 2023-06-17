@@ -1,5 +1,5 @@
-use std::fs;
 // reference interpreter
+use std::fs;
 
 fn main() {
     exec(parse(
@@ -55,6 +55,7 @@ fn exec(mut prog: Vec<(usize, usize)>) {
     while let Some(&(i, j)) = prog.get(max) {
         prog.extend_from_within(max - i..max);
         prog.splice(0..prog.len().min(j + 1), []);
+        // dbg!(prog.len());
     }
 
     println!("half-baked, (or rather, cut) result: {:?}", prog);
@@ -66,8 +67,8 @@ fn parse(p: String) -> Vec<(usize, usize)> {
 
     for (i, x) in p.split_whitespace().enumerate() {
         let x = x.parse().expect("could not parse file");
-        if i & 1 == 0 && i > 0 {
-            if i / 2 <= t {
+        if i & 1 == 1 {
+            if i / 2 < t {
                 panic!("undefined behaviour detected @ {}", i - 1);
             }
             v.push((t, x));
