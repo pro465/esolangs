@@ -69,7 +69,7 @@ fn parse(p: String) -> Vec<(usize, usize)> {
         let x = x.parse().expect("could not parse file");
         if i & 1 == 1 {
             if i / 2 < t {
-                panic!("undefined behaviour detected @ {}", i - 1);
+                panic!("syntax error @ {}", i - 1);
             }
             v.push((t, x));
         }
