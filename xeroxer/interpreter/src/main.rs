@@ -28,11 +28,14 @@ fn exec(mut prog: Vec<(usize, usize)>) {
 
     let mut ip = 0;
 
-    let max = prog.iter().map(|i| i.0).max().unwrap_or_default();
+    let max = prog.iter().map(|i| i.0).max().unwrap_or(1).max(1);
 
     while ip < prog.len().min(max) {
         let (i, j) = prog[ip];
         prog.extend_from_within(ip.saturating_sub(i)..ip);
+        if (i, j) == (0, 0) {
+            print!("{}", char::from_u32(prog[ip - 1].0 as u32).unwrap());
+        }
         /*if i == S {
             println!("copy {:?}", &prog[ip - i..ip]);
             std::thread::sleep_ms(1000);
@@ -53,6 +56,9 @@ fn exec(mut prog: Vec<(usize, usize)>) {
     prog.splice(0..ip - max, []);
 
     while let Some(&(i, j)) = prog.get(max) {
+        if (i, j) == (0, 0) {
+            print!("{}", char::from_u32(prog[max - 1].0 as u32).unwrap());
+        }
         prog.extend_from_within(max - i..max);
         prog.splice(0..prog.len().min(j + 1), []);
         // dbg!(prog.len());
@@ -69,7 +75,7 @@ fn parse(p: String) -> Vec<(usize, usize)> {
         let x = x.parse().expect("could not parse file");
         if i & 1 == 1 {
             if i / 2 < t {
-                panic!("syntax error @ {}", i - 1);
+                eprintln!("potential undefined behaviour detected @ {}", i - 1);
             }
             v.push((t, x));
         }
