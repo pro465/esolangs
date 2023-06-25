@@ -1,0 +1,1 @@
+(tail (quote (cons head head)))
