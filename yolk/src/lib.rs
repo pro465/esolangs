@@ -74,7 +74,7 @@ pub fn exec(p: String) {
 
         let f = inp.pop().unwrap();
 
-        let res = get(&f.clone(), f, List(inp));
+        let res = get(&f.clone(), f, inp.pop().unwrap());
 
         println!("{}", res);
     }
