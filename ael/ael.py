@@ -43,7 +43,7 @@ def parse(prog):
             prog=prog[i+1:]
         elif isdigit(prog[0]):
             i=0
-            while isdigit(prog[i]): i+=1
+            while i<len(prog) and isdigit(prog[i]): i+=1
             res.append(Push(int(prog[:i])))
             prog=prog[i:]
         else:
