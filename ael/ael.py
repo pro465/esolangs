@@ -112,6 +112,7 @@ def run(stack, prog):
         elif ins == ':': stack.append(deepcopy(stack[-1]))
         elif ins == ';': stack.append(deepcopy(stack[-2]))
         elif ins == '~': stack[-2], stack[-1] = stack[-1], stack[-2]
+        elif ins == '!': stack.insert(-2, deepcopy(stack[-1]))
 
         elif ins == 'd':
             n = get_n(stack)
