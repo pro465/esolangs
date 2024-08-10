@@ -6,48 +6,35 @@ import sys
 class Push:
     data: object
 
-@dataclass
-class Map:
-    code: object
-
-def skip_str(prog):
-    if prog[0]!='"':
-        return 0
-
-    i=1
-    while i<len(prog) and prog[i]!='"':
-        if prog[i]=='\\': i+=1
-        i+=1
-    return i+1
-
 def isdigit(c): return c in "0123456789"
 
 def parse(prog):
     res=[]
     while len(prog)>0:
         prog=prog.strip()
-        if prog[0]=='"':
-            l=skip_str(prog)
-            res.append(Push(list(bytes(prog[1:l-1], "utf-8"))))
-            prog=prog[l:]
-        elif prog[0]=='[':
+        if prog[0]=='[':
             c=0
             i=1
             while c>0 or prog[i]!=']':
-                i+=skip_str(prog[i:])
+                if prog[i]=="'": 
+                    i+=1
+                    continue
                 if prog[i]=='[': c+=1
                 elif prog[i]==']': c-=1
                 i+=1
 
-            res.append(Map(parse(prog[1:i])))
+            res.append(Push(parse(prog[1:i])))
             prog=prog[i+1:]
+        elif prog[0]=="'":
+            res.append(Push(ord(prog[1])))
+            prog=prog[2:]
         elif isdigit(prog[0]):
             i=0
             while i<len(prog) and isdigit(prog[i]): i+=1
             res.append(Push(int(prog[:i])))
             prog=prog[i:]
         else:
-            res.append(prog[0])
+            res.append(ord(prog[0]))
             prog=prog[1:]
     return res
 
@@ -99,16 +86,16 @@ def get_idx(stack):
 
 def run(stack, prog):
     for ins in prog:
-        if isinstance(ins, Push): stack.append(ins.data)
-        elif isinstance(ins, Map):
-            l=[]
-            for i in stack.pop():
-                stack.append(i)
-                run(stack, ins.code)
-                l.append(stack.pop())
-            stack.append(l)
+        if isinstance(ins, Push): 
+            stack.append(ins.data)
+            continue
+        if isinstance(ins, list): 
+            stack.append(ins)
+            continue
 
-        elif ins == '$': stack.pop()
+        ins=chr(ins)
+
+        if ins == '$': stack.pop()
         elif ins == ':': stack.append(deepcopy(stack[-1]))
         elif ins == ';': stack.append(deepcopy(stack[-2]))
         elif ins == '~': stack[-2], stack[-1] = stack[-1], stack[-2]
@@ -171,7 +158,28 @@ def run(stack, prog):
             y=stack.pop()
             x=stack.pop()
             stack.append(x+[y])
-        else: print(ins)
+
+        elif ins == 'm':
+            l=[]
+            block=stack.pop()
+            for i in stack.pop():
+                stack.append(i)
+                run(stack, block)
+                l.append(stack.pop())
+            stack.append(l)
+        elif ins == 'l':
+            l=[]
+            block=stack.pop()
+            run(stack, block)
+            while stack.pop():
+                run(stack, block)
+        elif ins == 'i':
+            l=[]
+            block=stack.pop()
+            if stack.pop():
+                run(stack, block)
+
+        else: print(ins, end='')
 
 with open(sys.argv[1]) as f:
     run([], parse(f.read()))
