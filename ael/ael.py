@@ -142,6 +142,10 @@ def run(stack, prog):
             idx = get_idx(stack)
             l = stack.pop()
             stack.append(l[idx])
+        elif ins == '&':
+            obj = stack.pop()
+            idx = get_idx(stack)
+            stack[-1][idx]=obj
         elif ins == '|':
             idx = stack.pop()
             l = stack.pop()
