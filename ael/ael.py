@@ -108,8 +108,12 @@ def run(stack, prog):
             n = get_n(stack)
             if n==0: continue
             stack[-n-1:] = [stack[-1]]+stack[-n-1:-1]
+        elif ins == 'r':
+            n = get_n(stack)
+            if n==0: continue
+            stack.append(deepcopy(stack[-n-1]))
 
-        elif ins == '`': stack[-1]*=-1
+        elif ins == '`': stack[-1]=op(lambda x,y: -y, 0, stack[-1])
         elif ins == '+':
             y=stack.pop()
             x=stack.pop()
@@ -178,9 +182,12 @@ def run(stack, prog):
         elif ins == 'l':
             l=[]
             block=stack.pop()
-            run(stack, block)
+            cond=stack.pop()
+            run(stack, cond)
             while stack.pop():
                 run(stack, block)
+                run(stack, cond)
+
         elif ins == 'i':
             l=[]
             block=stack.pop()
