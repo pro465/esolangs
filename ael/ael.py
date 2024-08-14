@@ -77,12 +77,11 @@ def op(f, a, b):
 def prefixes(l): return [deepcopy(l[:i]) for i in range(len(l))]
 
 def get_n(stack):
-    if isinstance(stack[-1], int): return stack.pop()
-    return 2
+    return stack.pop()
 
 def get_idx(stack):
-    if isinstance(stack[-1], int): return stack.pop()
-    return 0
+    idx = stack.pop()
+    return idx%len(stack[-1])
 
 def run(stack, prog):
     for ins in prog:
@@ -171,6 +170,11 @@ def run(stack, prog):
                 run(stack, block)
                 l.append(stack.pop())
             stack.append(l)
+        elif ins == 'e':
+            block=stack.pop()
+            for i in stack.pop():
+                stack.append(i)
+                run(stack, block)
         elif ins == 'l':
             l=[]
             block=stack.pop()
