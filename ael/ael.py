@@ -136,6 +136,7 @@ def run(stack, prog):
             stack.append(op(lambda x, y: x%y, x, y))
 
         elif ins == ',': stack.append(getc())
+        elif ins == '_': stack.append(int(input().strip()))
         elif ins == '#': 
             print_pretty(stack.pop())
             print()
