@@ -6,6 +6,14 @@ import sys
 class Push:
     data: object
 
+@dataclass
+class Pushchar(Push):
+    data: object
+
+@dataclass
+class Pushint(Push):
+    data: object
+
 def isdigit(c): return c in "0123456789"
 
 def parse(prog):
@@ -26,12 +34,12 @@ def parse(prog):
             res.append(Push(parse(prog[1:i])))
             prog=prog[i+1:]
         elif prog[0]=="'":
-            res.append(Push(ord(prog[1])))
+            res.append(Pushchar(ord(prog[1])))
             prog=prog[2:]
         elif isdigit(prog[0]):
             i=0
             while i<len(prog) and isdigit(prog[i]): i+=1
-            res.append(Push(int(prog[:i])))
+            res.append(Pushint(int(prog[:i])))
             prog=prog[i:]
         else:
             res.append(ord(prog[0]))
@@ -43,6 +51,12 @@ def getc(): return sys.stdin.buffer.read(1)[0]
 def print_bytes(b):
     if isinstance(b, list):
         for i in b: print_bytes(i)
+    elif isinstance(b, Pushint):
+        sys.stdout.buffer.write(bytes([b.data%256]))
+    elif isinstance(b, Pushchar):
+        sys.stdout.buffer.write(bytes([ord("'"), b.data%256]))
+    elif isinstance(b, Push):
+        for i in b.data: print_bytes(i)
     else:
         sys.stdout.buffer.write(bytes([b%256]))
 
